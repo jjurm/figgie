@@ -4,7 +4,7 @@ const Pool = require("pg").Pool;
 const pool = new Pool({
   user: "me",
   host: "localhost",
-  database: "api",
+  database: "figgie",
   password: "password",
   port: 5432
 });
@@ -69,7 +69,7 @@ function createPlayer(username, password, cb) {
         console.log("error during hashing", err);
         return cb(false, "Error hashing pw.");
       }
-
+        console.log(hashedpw)
       // Store hash in your password DB.
       pool.query(
         "INSERT INTO players (username, money, hashedpw) VALUES ($1, $2, $3)",

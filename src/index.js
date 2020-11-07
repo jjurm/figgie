@@ -26,8 +26,8 @@ function render(user) {
 
       <footer className='footer mt-auto py-3 bg-dark text-white text-right'>
         <div className='container'>
-          Built by Felix Wang and Wanqi Zhu
-          <a href="https://github.com/felixwang9817/figgie"> <FaGithub /> </a>
+          Built by Felix Wang and Wanqi Zhu, forked by Juraj
+          <a href="https://github.com/jjurm/figgie"> <FaGithub /> </a>
           <a href="mailto:wanqizhu@stanford.edu;felixw17@stanford.edu&subject=Figgie"> <MdEmail /> </a>
         </div>
       </footer>
@@ -55,7 +55,7 @@ fetch(
 
 
 class AppContainerRaw extends React.Component {
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.unlisten = this.props.history.listen((location, action) => {
       console.log("on route change", location.pathname);
       ReactGA.set({ page: location.pathname }); // Update the user's current page

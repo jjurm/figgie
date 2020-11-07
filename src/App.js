@@ -68,11 +68,12 @@ function CheatSheet() {
                   <span> c s h d</span> for the four suits.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <span>h a 15</span> offers hearts at 15. Someone can then
-                  enter <span>t h</span> for <span>take hearts</span>.
+                  <span>h a 15</span> (or <span>ha15</span>) offers hearts at 15. Someone can then
+                  enter <span>t h</span> (or <span>th</span>) for <span>take hearts</span>.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <span>4 b f s</span> is <span>4 bid for spades</span>.
+                  <span>4 b f s</span> (or <span>4bs</span>) is <span>4 bid for spades</span>. Someone can then
+                  enter <span>s s</span> (or <span>ss</span>) for <span>sell spades</span>.
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <span>c</span> or <span>o</span> to clear.
@@ -113,7 +114,7 @@ class App extends Component {
   }
 
   // state must be set before render to prevent redirect to /
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     this.setState({ username: this.props.user.username });
     this.setState({ roomNumber: this.props.user.roomNumber });
   }

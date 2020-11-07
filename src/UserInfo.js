@@ -34,9 +34,15 @@ class UserInfo extends React.Component {
       }
       let minutes = Math.floor(ms / 60000);
       let seconds = Math.floor((ms - 60000 * minutes) / 1000);
+      function pad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+      }
+      let seconds_str = pad(seconds, 2);
       return (
         <span id="timer">
-          {minutes}:{seconds} <GiSandsOfTime />
+          {minutes}:{seconds_str} <GiSandsOfTime />
         </span>
       );
     }

@@ -12,6 +12,9 @@ const cors = require("cors");
 app.use(
   cors({
     origin: [
+      "http://figgie.juraj.space",
+      "http://figgie.juraj.space:3000",
+      "https://figgie.juraj.space",
       "http://localhost:3000",
       "http://3.22.23.96:80",
       "http://figgie.io",
@@ -95,12 +98,6 @@ passport.deserializeUser(function(user, cb) {
   cb(null, user);
 });
 
-var server;
-if (process.env.NODE_ENV === "production") {
-  server = "http://figgie.io:8080";
-} else {
-  server = "http://localhost:8080";
-}
 
 app.post(
   "/login",
@@ -249,6 +246,11 @@ let roomToState = {}; // room number -> market state and player state for that r
 usernameToRoomNumber = {};
 usernameToSocketid = {};
 
+function isNormalInteger(str) {
+  let n = Math.floor(Number(str));
+  return n !== Infinity && String(n) === str && n >= 0;
+}
+
 // PARSE FUNCTION
 function parseCommand(command, socket) {
   let user = socket.handshake.session.passport.user;
@@ -280,12 +282,50 @@ function parseCommand(command, socket) {
   if (tokens.length == 1) {
     // clear command: clear or out
     let clearAction = tokens[0];
-    if (!clearActions.includes(clearAction)) {
-      socket.emit("alert", "Command not found: " + command);
+    if (clearActions.includes(clearAction)) {
+      clearPlayer(username, roomNumber);
       return;
+    } else {
+      let word = tokens[0];
+      if (word.length == 2 && (word[0] == 't' || word[0] == 's')) {
+          // take/sell suit, i.e. ts
+          let suit = suitAbbreviationToSuit[word[1]];
+          if (!suits.includes(suit)) {
+            socket.emit("alert", "Error parsing suit: " + suit);
+            return;
+          }
+          if (word[0] == 't') {
+            takeOffer(suit, username, roomNumber, socket);
+          } else {
+            sellBid(suit, username, roomNumber, socket);
+          }
+      } else if (word.length >= 3 && word[1] == 'a' && isNormalInteger(word.substr(2))) {
+        // SUIT at X, i.e. sa10
+        let suit = suitAbbreviationToSuit[word[0]];
+        if (!suits.includes(suit)) {
+          socket.emit("alert", "Error parsing suit: " + suit);
+          return;
+        }
+        let price = Number(word.substr(2));
+        if (!postOffer(suit, price, username, roomNumber)) {
+          socket.emit("alert", "Invalid offer: no card to sell or price too high.");
+        }
+      } else if (word.length >= 3 && word[word.length - 2] == 'b' && isNormalInteger(word.substr(0, word.length - 2))) {
+        // X bid SUIT, i.e. 10bh
+        let suit = suitAbbreviationToSuit[word[word.length - 1]];
+        if (!suits.includes(suit)) {
+          socket.emit("alert", "Error parsing suit: " + suit);
+          return;
+        }
+        let price = Number(word.substr(0, word.length - 2));
+        if (!postBid(suit, price, username, roomNumber)) {
+          socket.emit("alert", "Invalid bid: price too low.");
+        }
+      } else {
+        socket.emit("alert", "Command not found: " + command);
+        return;
+      }
     }
-
-    clearPlayer(username, roomNumber);
   } else if (tokens.length == 2) {
     // take command: take SUIT
     // sell command: sell SUIT

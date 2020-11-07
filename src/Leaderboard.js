@@ -46,8 +46,8 @@ class Leaderboard extends React.Component {
           >
             <thead>
               <tr>
-                <td>username</td>
-                <td>money</td>
+                <td>Username</td>
+                <td>Money</td>
               </tr>
             </thead>
             <tbody>

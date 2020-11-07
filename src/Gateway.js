@@ -14,7 +14,7 @@ class Gateway extends React.Component {
     this.onSignup = this.onSignup.bind(this);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.setState({ user: this.props.user, newUser: false });
   }
 
