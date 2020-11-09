@@ -37,7 +37,7 @@ const saltRounds = 10;
 const kMaxPlayers = process.env.NODE_ENV === "production" ? 4 : 4;
 const kMaxObservers = 2;
 const gameTime =
-  process.env.NODE_ENV === "production" ? 4 * 60 * 1000 : 30 * 1000; // in ms
+  process.env.NODE_ENV === "production" ? 4 * 60 * 1000 : 4 * 60 * 1000; // in ms
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -659,6 +659,7 @@ function startGame(roomNumber) {
   let cnt = 0;
   Object.keys(playerState).map(player => {
     let playerCards = cards.slice(cnt, cnt + 10);
+    playerState[player]["numCards"] = 10;
     // for simplicity, netGain will track money after game ends minus money before game start
     playerState[player]["netGain"] = -playerState[player]["money"];
     playerState[player]["money"] -= 50;
